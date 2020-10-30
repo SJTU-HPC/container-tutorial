@@ -1,8 +1,6 @@
 #!/bin/bash
-#SBATCH -J test
+#SBATCH -J pytorch_test
 #SBATCH -p dgx2
-#SBATCH -o %j.out
-#SBATCH -e %j.err
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=6

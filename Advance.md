@@ -1,6 +1,6 @@
-# Advance
+## Advance
 
-## Use U2CB create your own image
+### Use U2CB create your own image
 
 ```shell
 $ u2cb create -n test-image -b docker://ubuntu
@@ -58,7 +58,7 @@ Thread model: posix
 gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
 ```
 
-## Case Study: add gsl to base image
+### Case: add gsl into your image
 
 ```shell
 $ u2cb create -n test-gsl -b docker://sjtuhpc/hpc-base-container:gcc-8.ompi-4.0

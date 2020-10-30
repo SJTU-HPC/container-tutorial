@@ -1,6 +1,6 @@
 # Container Tutorial for PI 2.0
 
-The tutorial is divided into two part:
+The tutorial is divided into two parts:
 
 1. [Basic](./Basic.md) : Basic of Singularity for PI 2.0
 1. [Advance](./Advance.md) : Usage of U2CB (Unprivileged User Container Build Solution)

@@ -1,9 +1,29 @@
-# Basic 
+## Basic
+
+### Introduction to Singularity
+
+Singularity is a container platform. It allows you to create and run containers that package up pieces of software in a way that is portable and reproducible. You can build a container using Singularity on your laptop, and then run it on many of the largest HPC clusters in the world, local university or company clusters, a single server, in the cloud, or on a workstation down the hall. Your container is a single file, and you don’t have to worry about how to install all the software you need on each different operating system.
+
+More Information please refer [https://sylabs.io/guides/3.6/user-guide/introduction.html](https://sylabs.io/guides/3.6/user-guide/introduction.html).
+
+### Clone the Repo of Tutorial
+
+You can visit [GitHub Page of This Tutorial](https://github.com/SJTU-HPC/container-tutorial.git) for all documents and mateials.
+
+Now please `ssh login.hpc.sjtu.edu.cn` to login into PI 2.0 and clone the GitHub Repo.
 
 ```shell
 git clone https://github.com/SJTU-HPC/container-tutorial.git
 cd ~/container-tutorial
 ```
+
+### Create Your First Container
+
+You can use `singularity version` to check the version of Singularity on PI 2.0. For the basic usage of singualrity, you can visit [https://sylabs.io/guides/3.6/user-guide/index.html](https://sylabs.io/guides/3.6/user-guide/index.html).
+
+`singularity help` gives an overview of Singularity options and subcommands. For additional help or support, please visit [https://www.sylabs.io/docs/](https://sylabs.io/guides/3.6/user-guide/quick_start.html#overview-of-the-singularity-interface). 
+
+Singularity can make use of public images available from the Docker Hub. By specifying the docker:// URI for an image that has already been located, Singularity can pull it - e.g.:
 
 ```shell
 $ singularity pull docker://ubuntu
@@ -21,8 +41,6 @@ Storing signatures
 2020/10/30 10:23:29  info unpack layer: sha256:a254829d9e55168306fd80a49e02eb015551facee9c444d9dce3b26d19238b82
 INFO:    Creating SIF file...
 INFO:    Build complete: ubuntu_latest.sif
-$ ls
-ubuntu_latest.sif
 ```
 
 ```shell
@@ -65,46 +83,34 @@ VERSION_CODENAME=focal
 UBUNTU_CODENAME=focal
 ```
 
+
+The Singularity Image is `read-only`, so you can not modify the content of the image.
+
 ```shell
 Singularity> apt update
 Reading package lists... Done
 E: List directory /var/lib/apt/lists/partial is missing. - Acquire (30: Read-only file system)
 ```
 
+### Use Singularity on PI 2.0
+
 https://hub.docker.com/repository/docker/sjtuhpc/hpc-base-container
 
 ```shell
+$ cd mpi_hello
 $ singularity pull docker://sjtuhpc/hpc-base-container:gcc-8.ompi-4.0
 INFO:    Converting OCI blobs to SIF format
 INFO:    Starting build...
 Getting image source signatures
 Copying blob f34b00c7da20 skipped: already exists
-Copying blob 4abecf7a7b1e done
-Copying blob 14d4726ab663 done
-Copying blob 36744546b284 done
-Copying blob b45bb8a22c1e done
-Copying blob 250d99fb66f7 done
-Copying config b785527bc5 done
 Writing manifest to image destination
 Storing signatures
-2020/10/30 10:31:46  info unpack layer: sha256:f34b00c7da207ce777a45a37b1241d61bd613c43e3f7c017ceea736bc919c365
-2020/10/30 10:31:47  warn rootless{usr/bin/newgidmap} ignoring (usually) harmless EPERM on setxattr "security.capability"
-2020/10/30 10:31:47  warn rootless{usr/bin/newuidmap} ignoring (usually) harmless EPERM on setxattr "security.capability"
-2020/10/30 10:31:47  warn rootless{usr/bin/ping} ignoring (usually) harmless EPERM on setxattr "security.capability"
-2020/10/30 10:31:48  warn rootless{usr/sbin/arping} ignoring (usually) harmless EPERM on setxattr "security.capability"
-2020/10/30 10:31:48  warn rootless{usr/sbin/clockdiff} ignoring (usually) harmless EPERM on setxattr "security.capability"
-2020/10/30 10:31:49  info unpack layer: sha256:4abecf7a7b1e878de24ab3a10f8f1c2d14c2a7411c4e209c103289e0dc9b4480
-2020/10/30 10:31:51  info unpack layer: sha256:14d4726ab663d963925861c176db370f2e5a99d4e3a283cb15cfb562fa97fb85
-2020/10/30 10:31:52  warn rootless{usr/bin/ssh-agent} ignoring (usually) harmless EPERM on setxattr "user.rootlesscontainers"
-2020/10/30 10:31:52  warn rootless{usr/bin/wall} ignoring (usually) harmless EPERM on setxattr "user.rootlesscontainers"
-2020/10/30 10:31:52  warn rootless{usr/libexec/openssh/ssh-keysign} ignoring (usually) harmless EPERM on setxattr "user.rootlesscontainers"
-2020/10/30 10:31:53  info unpack layer: sha256:36744546b28479d46ea48ad08babed5f07c636956fd5d192780243e79121f010
-2020/10/30 10:31:53  info unpack layer: sha256:b45bb8a22c1e319bbee184899be8d154f18ff019901490dc8663348af3972a5f
-2020/10/30 10:31:54  info unpack layer: sha256:250d99fb66f74422b396fede2739177c91a261f52914d5e1da2a0f169089daff
 INFO:    Creating SIF file...
 INFO:    Build complete: hpc-base-container_gcc-8.ompi-4.0.sif
-$ ls
-hpc-base-container_gcc-8.ompi-4.0.sif  ubuntu_latest.sif
+
+$ ls hpc-base-container_gcc-8.ompi-4.0.sif
+hpc-base-container_gcc-8.ompi-4.0.sif
+
 $ singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif gcc -v
 Using built-in specs.
 COLLECT_GCC=gcc
@@ -113,6 +119,7 @@ Target: x86_64-redhat-linux
 Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/opt/rh/devtoolset-8/root/usr --mandir=/opt/rh/devtoolset-8/root/usr/share/man --infodir=/opt/rh/devtoolset-8/root/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --with-default-libstdcxx-abi=gcc4-compatible --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-8.3.1-20190311/obj-x86_64-redhat-linux/isl-install --disable-libmpx --enable-gnu-indirect-function --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
 Thread model: posix
 gcc version 8.3.1 20190311 (Red Hat 8.3.1-3) (GCC)
+
 $ singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif mpirun -V
 mpirun (Open MPI) 4.0.5
 
@@ -120,6 +127,7 @@ Report bugs to http://www.open-mpi.org/community/help/
 ```
 
 ```shell
+
 $ singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif mpicc -o mpi_hello mpi_hello.c
 $ cat mpi_hello.slurm
 #!/bin/bash
@@ -132,16 +140,18 @@ $ cat mpi_hello.slurm
 #SBATCH --ntasks-per-node=4
 
 srun --mpi=pmi2 singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif ./mpi_hello
+
 $ sbatch mpi_hello.slurm
-Rank 0 of 4 has pid xxxxx on casxxx.pi.sjtu.edu.cn
-Rank 2 of 4 has pid xxxxx on casxxx.pi.sjtu.edu.cn
-Rank 1 of 4 has pid xxxxx on casxxx.pi.sjtu.edu.cn
-Rank 3 of 4 has pid xxxxx on casxxx.pi.sjtu.edu.cn
+$ cat {xxxxxx}.out
+Rank 0 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
+Rank 2 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
+Rank 1 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
+Rank 3 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
 ```
 
-## Official Image
+### Official Images on PI 2.0
 
-Support App List
+#### Support App List
 
 1. gromacs (cpu, dgx2)
 1. lammps (cpu, dgx2)
@@ -153,16 +163,54 @@ Support App List
 1. pytorch (dgx2)
 1. tensorflow (dgx2)
 
-### Case: Lammps
+#### Usage
+
+#### Case 1: Lammps
+
+Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS) is a software application designed for molecular dynamics simulations. 
+
+While use the official **Lammps** container module, you need not any modify for your slurm scripts.
 
 ```shell
 $ cd lammps
+$ cat lammps.slurm
+#!/bin/bash
+#SBATCH --job-name=lmp_test
+#SBATCH --partition=cpu
+#SBATCH --output=%j.out
+#SBATCH --error=%j.err
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=40
+
+module purge
+module load lammps/2020-cpu
+
+srun --mpi=pmi2 lmp -i in.eam -var x 1 -var y 1 -var z 1
+
 $ sbatch lammps.slurm
 ```
 
-### Case: PyTorch
+#### Case 2: PyTorch
+
+PyTorch is a GPU accelerated tensor computational framework with a Python frontend. Functionality can be easily extended with common Python libraries such asNumPy, SciPy, and Cython. Automatic differentiation is done with a tape-based system at both a functional and neural network layer level. This functionality brings a high level of flexibility and speed as a deep learning framework and provides accelerated NumPy-like functionality.
+
+While use the official **PyTorch** container module, you need not any modify for your slurm scripts.
 
 ```shell
 $ cd pytorch
+$ cat pytorch.slurm
+#!/bin/bash
+#SBATCH -J pytorch_test
+#SBATCH -p dgx2
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:1
+
+module purge
+module load pytorch/1.6.0
+
+python pytorch_test.slurm
+
 $ sbatch pytorch.slurm
 ```
