@@ -2,6 +2,12 @@
 
 ### Use U2CB create your own image
 
+U2CB is a non-privileged user container construction platform developed by the High Performance Computing Center of Shanghai Jiao Tong University. Users on the cluster can use U2CB to build Singularity images by themselves. You can refer to https://docs.hpc.sjtu.edu.cn/job/container/u2cb/ for more information.
+
+> [color=#efd47a] Note: if dependences of your application including MPI or CUDA. We strongly suggest to use offical base image (https://hub.docker.com/r/sjtuhpc/hpc-base-container/tags) as the base of your container.
+
+First, use `create` command to create your u2cb container and use `-n` to specific the container's name and `-b` to specific the url of the base container.
+
 ```shell
 $ u2cb create -n test-image -b docker://ubuntu
 INFO:    Starting build...
@@ -19,6 +25,8 @@ WARNING: The --fix-perms option modifies the filesystem permissions on the resul
 INFO:    Creating sandbox directory...
 INFO:    Build complete: /u2cb/acct-hpc/hpccsg/containers/test-image
 ```
+
+`connect` to the container, and use `apt` to install gcc.
 
 ```shell
 $ u2cb list
@@ -42,6 +50,8 @@ Thread model: posix
 gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
 ```
 
+download the container and check the version of gcc.
+
 ```shell
 $ u2cb download -n test-image
 $ ls
@@ -58,7 +68,13 @@ Thread model: posix
 gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
 ```
 
-### Case: add gsl into your image
+### Case: GSL Application
+
+Suppose your application rely on GNU Scientific Library (GSL). And you can not find the library in system. So you can use U2CB to create a container to compile and run your code on PI 2.0.
+
+> [color=#1ca315] The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers.
+
+First, create u2cb container names `test-gsl` and choose `gcc-8.ompi-4.0` as your base container.
 
 ```shell
 $ u2cb create -n test-gsl -b docker://sjtuhpc/hpc-base-container:gcc-8.ompi-4.0
@@ -75,8 +91,10 @@ Storing signatures
 2020/10/30 12:30:06  info unpack layer: sha256:a254829d9e55168306fd80a49e02eb015551facee9c444d9dce3b26d19238b82
 WARNING: The --fix-perms option modifies the filesystem permissions on the resulting container.
 INFO:    Creating sandbox directory...
-INFO:    Build complete: /u2cb/acct-hpc/hpccsg/containers/test-image
+INFO:    Build complete: /u2cb/acct-hpc/hpccsg/containers/test-gsl
 ```
+
+Connect to the u2cb container and just `yum install gsl-devel` to install the library.
 
 ```shell
 $ u2cb connect -n test-gsl
@@ -101,6 +119,8 @@ Singularity> yum install -y gsl-devel
 ...
 ```
 
+now you can download the container to local named `test-gsl.simg`.
+
 ```shell
 $ u2cb download -n test-gsl
 INFO:    Starting build...
@@ -118,6 +138,11 @@ Saving to: ‘test-gsl.simg’
 2020-10-30 13:04:12 (179 MB/s) - ‘test-gsl.simg’ saved [234196992/234196992]
 
 Downloaded the container to ./test-gsl.simg.
+```
+
+Finally, you can use `test-gsl.simg` to compile and run your GSL application.
+
+```shell
 $ singularity run ~/test-gsl.simg gcc gsl_test.c -o gsl_test -lgsl
 $ singularity run ~/test-gsl.simg ./gsl_test
 J0(5) = -1.775967713143382642e-01

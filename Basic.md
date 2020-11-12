@@ -4,11 +4,11 @@
 
 Singularity is a container platform. It allows you to create and run containers that package up pieces of software in a way that is portable and reproducible. You can build a container using Singularity on your laptop, and then run it on many of the largest HPC clusters in the world, local university or company clusters, a single server, in the cloud, or on a workstation down the hall. Your container is a single file, and you don’t have to worry about how to install all the software you need on each different operating system.
 
-More Information please refer [https://sylabs.io/guides/3.6/user-guide/introduction.html](https://sylabs.io/guides/3.6/user-guide/introduction.html).
+> [color=#1ca315] More information please refer to [https://sylabs.io/guides/3.6/user-guide/introduction.html](https://sylabs.io/guides/3.6/user-guide/introduction.html).
 
-### Clone the Repo of Tutorial
+### Create Your First Container
 
-You can visit [GitHub Page of This Tutorial](https://github.com/SJTU-HPC/container-tutorial.git) for all documents and mateials.
+You can visit [GitHub Page of this Tutorial](https://github.com/SJTU-HPC/container-tutorial.git) for all documents and mateials.
 
 Now please `ssh login.hpc.sjtu.edu.cn` to login into PI 2.0 and clone the GitHub Repo.
 
@@ -16,8 +16,6 @@ Now please `ssh login.hpc.sjtu.edu.cn` to login into PI 2.0 and clone the GitHub
 git clone https://github.com/SJTU-HPC/container-tutorial.git
 cd ~/container-tutorial
 ```
-
-### Create Your First Container
 
 You can use `singularity version` to check the version of Singularity on PI 2.0. For the basic usage of singualrity, you can visit [https://sylabs.io/guides/3.6/user-guide/index.html](https://sylabs.io/guides/3.6/user-guide/index.html).
 
@@ -43,6 +41,8 @@ INFO:    Creating SIF file...
 INFO:    Build complete: ubuntu_latest.sif
 ```
 
+You can use `cat /etc/os-release` to check the verion of OS (Operating System). The OS of PI2.0 node is **centos 7**.
+
 ```shell
 $ cat /etc/os-release
 NAME="CentOS Linux"
@@ -61,6 +61,12 @@ CENTOS_MANTISBT_PROJECT_VERSION="7"
 REDHAT_SUPPORT_PRODUCT="centos"
 REDHAT_SUPPORT_PRODUCT_VERSION="7"
 ```
+
+When you use `singularity shell` to enter Singualrity container, you can see that 
+
+* You can still read and write your home directory.
+* User contexts maintain when the container is launched.
+* Operating System switch to Ubuntu.
 
 ```shell
 $ singularity shell ./ubuntu_latest.sif
@@ -83,7 +89,6 @@ VERSION_CODENAME=focal
 UBUNTU_CODENAME=focal
 ```
 
-
 The Singularity Image is `read-only`, so you can not modify the content of the image.
 
 ```shell
@@ -94,7 +99,9 @@ E: List directory /var/lib/apt/lists/partial is missing. - Acquire (30: Read-onl
 
 ### Use Singularity on PI 2.0
 
-https://hub.docker.com/repository/docker/sjtuhpc/hpc-base-container
+In this section, we show how to use Singularity on PI 2.0 with an example of *MPI Hello World*.
+
+The first step, `pull` MPI Container from Docker Hub. We maintain the HPC base container for PI 2.0 on [Docker Hub](https://hub.docker.com/r/sjtuhpc/hpc-base-container/tags).
 
 ```shell
 $ cd mpi_hello
@@ -110,7 +117,11 @@ INFO:    Build complete: hpc-base-container_gcc-8.ompi-4.0.sif
 
 $ ls hpc-base-container_gcc-8.ompi-4.0.sif
 hpc-base-container_gcc-8.ompi-4.0.sif
+```
 
+Check the version of gnu compiler and mpi.
+
+```shell
 $ singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif gcc -v
 Using built-in specs.
 COLLECT_GCC=gcc
@@ -126,8 +137,9 @@ mpirun (Open MPI) 4.0.5
 Report bugs to http://www.open-mpi.org/community/help/
 ```
 
-```shell
+Compile `mpi_hello.c` and submit the job to `small` node through slurm.
 
+```shell
 $ singularity run ./hpc-base-container_gcc-8.ompi-4.0.sif mpicc -o mpi_hello mpi_hello.c
 $ cat mpi_hello.slurm
 #!/bin/bash
@@ -149,27 +161,55 @@ Rank 1 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
 Rank 3 of 4 has pid {xxxx} on cas{xxx}.pi.sjtu.edu.cn
 ```
 
-### Official Images on PI 2.0
+### Official Containers on PI 2.0
 
-#### Support App List
+#### Support Applications
 
-1. gromacs (cpu, dgx2)
-1. lammps (cpu, dgx2)
-1. relion (cpu, dgx2)
-1. octave (gui)
-1. scilab (gui)
-1. openfoam (cpu)
-1. quantum-espresso (cpu)
-1. pytorch (dgx2)
-1. tensorflow (dgx2)
+All officially supported applications are listed below:
+
+| Application | Version  | Platform |
+| ----------- | -------- | -------- |
+| Gromacs     | ![](https://img.shields.io/badge/version-2020-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/CPU-blue?style=flat-square) ![](https://img.shields.io/badge/DGX2-green?style=flat-square)    |
+| Lammps     | ![](https://img.shields.io/badge/version-3Mar2020-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/CPU-blue?style=flat-square) ![](https://img.shields.io/badge/DGX2-green?style=flat-square)     |
+| Relion     | ![](https://img.shields.io/badge/version-3.0.8-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/CPU-blue?style=flat-square) ![](https://img.shields.io/badge/DGX2-green?style=flat-square) ![](https://img.shields.io/badge/Studio-inactive?style=flat-square)     |
+| OpenFOAM     | ![](https://img.shields.io/badge/version-6%20%7C%208-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/CPU-blue?style=flat-square)     |
+| Quantum Espresso     | ![](https://img.shields.io/badge/version-6.6-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/CPU-blue?style=flat-square)     |
+| PyTorch     | ![](https://img.shields.io/badge/version-1.4.0%20%7C%201.5.0%20%7C%201.6.0-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/DGX2-green?style=flat-square)     |
+| TensorFlow     | ![](https://img.shields.io/badge/version-1.15.3%20%7C%202.1.0%20%7C%202.2.0-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/DGX2-green?style=flat-square)     |
+| Octave     | ![](https://img.shields.io/badge/version-5.2.0-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/Studio-inactive?style=flat-square)     |
+| Scilab     | ![](https://img.shields.io/badge/version-6.6-yellowgreen?style=flat-square)     | ![](https://img.shields.io/badge/Studio-inactive?style=flat-square)     |
+
 
 #### Usage
+
+You have two ways to use these official applications containers.
+
+##### 1. Use `module load`
+
+You can use `module av` to list all environment modules and the official applications containers are listed in `/lustre/share/singularity/modules`.
+
+Just `module load` the application modules and run with the entrypoint of the application.
+
+```shell
+$ module load lammps/2020-dgx
+$ lmp ...
+```
+
+##### 2. Directly use the Singularity images
+
+All Singularity images of the application are stored in `/lustre/share/singularity/modules`. So you can use the Singularity images directly with is typical useful for interaction operations.
+
+```shell
+$ singularity shell /lustre/share/singularity/modules/openfoam/8.sif
+Singularity> source /opt/OpenFOAM-8/etc/bashrc
+Singularity> wmake
+```
 
 #### Case 1: Lammps
 
 Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS) is a software application designed for molecular dynamics simulations. 
 
-While use the official **Lammps** container module, you need not any modify for your slurm scripts.
+While use the official container module, you need not any modify for your slurm scripts.
 
 ```shell
 $ cd lammps
@@ -189,6 +229,7 @@ srun --mpi=pmi2 lmp -i in.eam -var x 1 -var y 1 -var z 1
 
 $ sbatch lammps.slurm
 ```
+
 
 #### Case 2: PyTorch
 
